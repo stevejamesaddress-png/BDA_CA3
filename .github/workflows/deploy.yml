@@ -24,6 +24,10 @@ jobs:
   deploy:
     # linux image 
     runs-on: ubuntu-latest
+    #fix premission issue preventing push to repo
+    permissions:
+      contents: write
+      packages: write
 
     steps:
       - name: Checkout out the latest code
