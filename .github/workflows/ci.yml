@@ -1,33 +1,62 @@
-name: CI - Test & Quick Train
+# =====================================================
+# File: .github/workflows/ci.yml
+# Author: Steven James L00196960
+# 
+# Continuous Integration (CI) Workflow
+# 
+# See README.md for the use case and architecture.
+# GitHub Actions is responsible for all automation. This particular workflow
+# is there tyo perform a quick integration test to provide confidence the checkin
+# is good and nothing is broken. 
+# 
+# =====================================================
+
+name: CI-TRAINER-API-SMOKE-TEST
 
 on:
   pull_request:
-    branches: [main]
+    branches: [ main ]
   push:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
-  ci:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout CA3 code
+      - name: Checkout APP and train code 
         uses: actions/checkout@v4
 
-      - name: Install Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
+      - name: Build and run the Trainer container smoke test
         run: |
-          pip install -r requirements.txt
-          pip install pytest mlflow scikit-learn
+          echo "***** Smoke test starting *****"
+          docker compose build trainer
+          docker compose up --build --exit-code-from trainer trainer
+          echo "Success: training step"
 
-      - name: Run tests
+      - name: Build the API container (basic build check)
         run: |
-          pytest --tb=short || echo "No tests yet - OK for now"
+          echo "***** Smoke API test starting *****"
+          docker compose up -d --build api
+          echo "Waiting a few seconds for the API to become ready on port 5001..."
+          sleep 15
+          echo "Testing endpoint first ...."
+          curl -f http://localhost:5001/
+          echo "API is up and running!"
 
-      - name: Quick train & test model (smoke test)
-        run: |
-          python src/train.py --quick
+          echo "Test endpoint with infernace query..."
+          RESPONSE=$(curl -s -f "http://localhost:5001/predict?sepal_length=5.1&sepal_width=3.5&petal_length=1.4&petal_width=0.2")
+          echo "API Response:"
+          echo "$RESPONSE"
+          
+          # check if it worked using the response var 
+          if echo "$RESPONSE" | grep -q '"status":"success"'; then
+            echo " API is confirmed working!"
+          else
+            echo "ERROR: end point failed!"
+            exit 1
+          fi
+        #clean the containers up pass or fail the tests 
+      - name: tear down containers
+        if: always()
+        run: docker compose down
