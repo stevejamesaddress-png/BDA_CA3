@@ -1,0 +1,37 @@
+# =====================================================
+# File: k8s/deployment.yaml
+# Author: Steven James L00196960
+# 
+# Kubernetes Deployment for the Flask API
+# Argo CD will or at least should automatically apply this when the image changes
+# =====================================================
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-bda-ca3-api
+spec:
+  selector:
+    matchLabels:
+      app: bda-ca3-api
+  template:
+    metadata:
+      labels:
+        app: bda-ca3-api
+    spec:
+      containers:
+      - name: api
+        #our image is in google github container registry 
+        #the line below will be updated after our CD workflow completes 
+        image: ghcr.io/stevejamesaddress-png/bda_ca3:main   # ← this line is updated by deploy.yml
+        ports:
+        - containerPort: 5001
+        env:
+        #note that tehre is no way to inject our .env 
+        #k8s can use a configmap 
+        #in real projetc you would use a script, tempate engine or if you have helm 
+        # then it can create a configmap from .env
+        - name: MODEL_DIR
+          value: /app/models
+        - name: API_PORT
+          value: "5001"

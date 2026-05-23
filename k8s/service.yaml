@@ -1,0 +1,21 @@
+# =====================================================
+# File: k8s/service.yaml
+# Author: Steven James L00196960
+# 
+# Kubernetes Service to expose the Flask APP
+# we expose the K8S service to outside the namespace with loadbancer 
+# and mapped to 5001:5001
+# =====================================================
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: bda-ca3-api
+spec:
+  selector:
+    app: bda-ca3-api
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001
+  type: LoadBalancer
