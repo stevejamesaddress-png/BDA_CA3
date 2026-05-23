@@ -1,0 +1,33 @@
+# =====================================================
+# File: k8s/argocd-application.yaml
+# Author: Steven James L00196960
+# 
+# tells Argo CD to watch our repo
+# and automatically deploy whatever is in the k8s/ folder is updated
+#
+#kubectl apply -f k8s/argocd-application.yaml -n <namespace> to apply this file to cluster 
+#sets up the application in Argo cd and better than via UI 
+# =====================================================
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bda-argo-ca3-app
+  namespace: argo-cd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/stevejamesaddress-png/bda-ca3.git
+    targetRevision: main
+    path: k8s
+  destination:
+    #we are using the default web sever 
+    server: https://kubernetes.default.svc
+    namespace: default
+  #set up our rules for sync 
+  syncPolicy:
+    automated:
+      # flow down delestions etc to Argo
+      prune: true
+      #if anythingf goes wrong then roll back to last working state from git
+      selfHeal: true
