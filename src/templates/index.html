@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kids Flower Identifier</title>
+    <style>
+        /* Updated background to a soft, appealing pastel green */
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #e8f5e9; }
+        .container { background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: inline-block; text-align: left; width: 600px; }
+        .input-group { margin-bottom: 10px; }
+        input[type=text] { width: 80px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; }
+        label { font-weight: bold; display: inline-block; width: 120px; }
+        .btn { background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%; margin-top: 15px; margin-bottom: 20px; transition: background-color 0.3s; }
+        .btn:hover { background-color: #45a049; }
+        .btn:disabled { background-color: #cccccc; cursor: not-allowed; }
+        
+        /* History Table Styling */
+        #history-section { display: none; margin-top: 20px; border-top: 2px solid #eee; padding-top: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; transition: background-color 1s ease; }
+        th { background-color: #f2f2f2; }
+
+        /* Error message styling */
+        #error-message { color: #d32f2f; font-weight: bold; text-align: center; display: none; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <h1>🌸 Kids Flower Identifier 🌸</h1>
+    <p style="font-size: 18px; color: #333; max-width: 600px; margin: 0 auto 30px auto;">
+        Welcome! This is an educational web application designed to predict a flower species 
+        (<strong>Setosa, Versicolor, or Virginica</strong>) based on input measurements.
+    </p>
+    
+    <div class="container">
+        <form id="predict-form">
+            <div class="input-group">
+                <label>Sepal Length:</label> <input type="text" id="sl" value="5.1"> cm
+            </div>
+            <div class="input-group">
+                <label>Sepal Width:</label> <input type="text" id="sw" value="3.5"> cm
+            </div>
+            <div class="input-group">
+                <label>Petal Length:</label> <input type="text" id="pl" value="1.4"> cm
+            </div>
+            <div class="input-group">
+                <label>Petal Width:</label> <input type="text" id="pw" value="0.2"> cm
+            </div>
+            <button type="submit" class="btn" id="submit-btn">Identify Flower!</button>
+        </form>
+
+        <!-- Hidden error message container -->
+        <div id="error-message"></div>
+
+        <!-- Session History Area -->
+        <div id="history-section">
+            <h3>Session History</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Measurements (cm)</th>
+                        <th>Prediction</th>
+                        <th>Confidence</th>
+                    </tr>
+                </thead>
+                <tbody id="history-body">
+                    <!-- History rows will be injected here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('predict-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const sl = document.getElementById('sl').value;
+            const sw = document.getElementById('sw').value;
+            const pl = document.getElementById('pl').value;
+            const pw = document.getElementById('pw').value;
+            
+            const errorMsg = document.getElementById('error-message');
+            const submitBtn = document.getElementById('submit-btn');
+            
+            // Reset UI states
+            errorMsg.style.display = 'none';
+            submitBtn.innerText = "Analysing...";
+            submitBtn.disabled = true;
+
+            fetch(`/predict?sepal_length=${sl}&sepal_width=${sw}&petal_length=${pl}&petal_width=${pw}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Restore button state
+                    submitBtn.innerText = "Identify Flower!";
+                    submitBtn.disabled = false;
+
+                    if(data.status === "success") {
+                        const species = data.predicted_flower.toUpperCase();
+                        const confidence = data.confidence_score;
+                        const inputs = `${sl} / ${sw} / ${pl} / ${pw}`;
+
+                        // Add to History Table
+                        document.getElementById('history-section').style.display = 'block';
+                        const historyBody = document.getElementById('history-body');
+                        const newRow = document.createElement('tr');
+                        
+                        // Flash row yellow briefly for visual feedback
+                        newRow.style.backgroundColor = '#fff9c4'; 
+                        newRow.innerHTML = `<td>${inputs}</td><td><strong>${species}</strong></td><td>${confidence}%</td>`;
+                        
+                        // Prepend so the newest result is at the top
+                        historyBody.insertBefore(newRow, historyBody.firstChild);
+                        
+                        // Fade out the background colour
+                        setTimeout(() => { newRow.style.backgroundColor = 'transparent'; }, 800);
+
+                    } else {
+                        errorMsg.innerText = `ERROR: ${data.error || "Invalid input."}`;
+                        errorMsg.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    submitBtn.innerText = "Identify Flower!";
+                    submitBtn.disabled = false;
+                    errorMsg.innerText = "SYSTEM ERROR: Could not connect to API.";
+                    errorMsg.style.display = 'block';
+                });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+#ignore virtual environments
+venv/
+.venv/
+env/
+
+#ignore python cache
+__pycache__/
+*.pyc
+
+# no os gen files
+.DS_Store
+Thumbs.db
+
+# models will be gnerated so stop local tests results from being added
+models/*.pkl

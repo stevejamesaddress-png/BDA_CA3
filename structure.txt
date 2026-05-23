@@ -1,0 +1,28 @@
+.
+├── .env
+├── .github
+│   └── workflows
+│       ├── ci.yml
+│       ├── deploy.yml
+│       └── train-ct.yml
+├── Dockerfile.app
+├── Dockerfile.train
+├── README.md
+├── compose.yml
+├── data
+│   └── iris.csv
+├── docker-compose.yml
+├── k8s
+│   ├── deployment.yaml
+│   └── service.yaml
+├── models
+│   └── local_model.pkl
+├── requirements.txt
+├── src
+│   ├── app.py
+│   ├── templates
+│   │   └── index.html
+│   └── train.py
+└── structure.txt
+
+8 directories, 18 files
