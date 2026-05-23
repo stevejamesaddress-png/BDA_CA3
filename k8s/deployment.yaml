@@ -23,7 +23,7 @@ spec:
       - name: api
         #our image is in google github container registry 
         #the line below will be updated after our CD workflow completes 
-        image: ghcr.io/stevejamesaddress-png/bda_ca3:main   # ← this line is updated by deploy.yml
+        image: ghcr.io/stevejamesaddress-png/BDA_CA3:main
         ports:
         - containerPort: 5001
         env:
