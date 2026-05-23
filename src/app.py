@@ -80,16 +80,17 @@ def predict():
     # we will log to mlflow only when in K8s environment i.e production in this simulation
     # we use the presence of an env var if we have it which we do in K8s see deployment.yaml
     # simple.
-    mlflow_tracking_uri = os.getenv('MLFLOW_TRACKING_URI')
+    mlflow_tracking_uri = os.getenv('MLFLOW_TRACKING')
     if mlflow_tracking_uri:
         try:
             mlflow.set_tracking_uri(mlflow_tracking_uri)
-            mlflow.log_param("sepal_length", sepal_length)
-            mlflow.log_param("sepal_width", sepal_width)
-            mlflow.log_param("petal_length", petal_length)
-            mlflow.log_param("petal_width", petal_width)
-            mlflow.log_param("predicted_flower", flower_name)
-            mlflow.log_metric("confidence_score", round(confidence, 2))
+            with mlflow.start_run():
+                mlflow.log_param("sepal_length", sepal_length)
+                mlflow.log_param("sepal_width", sepal_width)
+                mlflow.log_param("petal_length", petal_length)
+                mlflow.log_param("petal_width", petal_width)
+                mlflow.log_param("predicted_flower", flower_name)
+                mlflow.log_metric("confidence_score", round(confidence, 2))
             logger.info(f"Inference result logged to MLflow")
         except Exception as e:
             logger.warning(f"Could not log inference to MLflow: {e}")
