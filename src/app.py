@@ -1,5 +1,5 @@
 # =====================================================
-# File: train.py
+# File: app.py
 # Author: Steven James L00196960
 # Simpple Flask web application 
 # to serve real-time flower inferance 
