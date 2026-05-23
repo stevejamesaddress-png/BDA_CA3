@@ -17,7 +17,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/stevejamesaddress-png/BDA-CA3.git
+    repoURL: https://github.com/stevejamesaddress-png/BDA_CA3.git
     targetRevision: main
     path: k8s
   destination:
