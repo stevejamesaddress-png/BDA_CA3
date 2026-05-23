@@ -1,0 +1,41 @@
+# =====================================================
+# File: .github/workflows/train-ct.yml
+# Author: Steven James L00196960
+# 
+# Continuous Training Workflow
+# 
+# See README.md for the full use case and high-level architecture.
+# This workflow is the Continuous Training part of our MLOps pipeline.
+# 
+# GitHub Actions is responsible for all automation.
+# Triggered on new training data appearing in the data folder 
+# this workflow will auto run our traning code in its container 
+# and generate a new model.
+# 
+# =====================================================
+
+name: CONTINUOUS-TRAINING-ON-DATA-UPDATE
+
+# triggered on change or new data of data in the data folder
+#safe as train looking for certain file name iris.csv
+# on new data run this 
+on:
+  push:
+    paths:
+      - 'data/**'
+
+jobs:
+  train:
+    # Standard free Linux runner
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code and data   
+        uses: actions/checkout@v4 
+
+      - name: CT model 
+        run: |
+          echo "*** CONTINUOUS TRAINING of MODEL***"
+          docker compose build trainer
+          docker compose up --build --exit-code-from trainer trainer
+          echo "CT Completed double check log!"
