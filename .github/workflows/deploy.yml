@@ -48,8 +48,7 @@ jobs:
           push: true
           # we will just use main always we could have used the SHA for better traceability
           # Secure Hash Algorithm as ID or some nameing convetion 
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/bda-ca3:main
+          tags: ghcr.io/${{ github.repository_owner }}/bda-ca3:main
 
       - name: Update Kubernetes manifest with the new image
         run: |
