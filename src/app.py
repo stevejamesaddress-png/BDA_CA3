@@ -85,6 +85,7 @@ def predict():
         try:
             mlflow.set_tracking_uri(mlflow_tracking_uri)
             with mlflow.start_run():
+                mlflow.set_experiment("CA3_OPE_RESULTS")
                 mlflow.log_param("sepal_length", sepal_length)
                 mlflow.log_param("sepal_width", sepal_width)
                 mlflow.log_param("petal_length", petal_length)
