@@ -1,29 +1,35 @@
+# =====================================================
+# File: train.py
+# Author: Steven James L00196960
+# Overview: simple model trained using the iris dataset 
+#
+# update: removed all options to simplify and 
+# removed the MLflow code and git baseline code running fisrt 
+# =====================================================
 import os
-import argparse
 import logging
 import pickle
 import pandas as pd
+import time
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, f1_score
 from dotenv import load_dotenv
-import mlflow
+
 
 # Set up logging for the training programme
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - TRAIN - %(levelname)s - %(message)s')
+# we use UTC in zulu format
+logging.Formatter.converter = time.gmtime
+logging.basicConfig(
+    level=logging.INFO, 
+    format='%(asctime)sZ - TRAIN - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%dT%H:%M:%S'
+)
 logger = logging.getLogger(__name__)
 
 def main():
-    parser = argparse.ArgumentParser(description="Model Training Programme")
-    parser.add_argument('--env-file', type=str, required=False, help="Path to .env file")
-    parser.add_argument('--quick', action='store_true', help="Run a quick test without MLflow")
-    parser.add_argument('--no-mlflow', action='store_true', help="Disable MLflow tracking")
-    args = parser.parse_args()
-
-    # Load environment variables if explicitly provided (e.g. during local tests)
-    if args.env_file:
-        load_dotenv(args.env_file)
-        logger.info(f"Loaded environment variables from {args.env_file}")
+    # Load environment variables from .env
+    load_dotenv()
 
     data_dir = os.getenv('DATA_DIR')
     data_filename = os.getenv('DATA_FILENAME')
@@ -43,7 +49,7 @@ def main():
         logger.error(f"Data file not found at {data_path}")
         return
 
-    # Standard preprocessing for Iris dataset
+    # prepar ethe data for trining using the features and target below
     X = df.drop(columns=['species', 'Id', 'target'], errors='ignore')
     # Automatically detect the target column name
     if 'target' in df.columns:
@@ -63,13 +69,7 @@ def main():
     acc = accuracy_score(y_test, predictions)
     f1 = f1_score(y_test, predictions, average='macro')
 
-    if args.quick or args.no_mlflow:
-        logger.info(f"Quick mode accuracy: {acc:.2f}, F1: {f1:.2f}")
-    else:
-        logger.info("Logging metrics to MLflow...")
-        mlflow.log_metric("accuracy", acc)
-        mlflow.log_metric("f1_score", f1)
-        mlflow.sklearn.log_model(model, "model")
+    logger.info(f"Training finished - Accuracy: {acc:.2f}, F1: {f1:.2f}")
 
     # Save the model artefact using native pickle
     os.makedirs(model_dir, exist_ok=True)
