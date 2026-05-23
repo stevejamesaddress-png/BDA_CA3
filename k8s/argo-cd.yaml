@@ -5,7 +5,7 @@
 # tells Argo CD to watch our repo
 # and automatically deploy whatever is in the k8s/ folder is updated
 #
-#kubectl apply -f k8s/argocd-application.yaml -n <namespace> to apply this file to cluster 
+#kubectl apply -f k8s/argocd-cd.yaml -n <namespace> to apply this file to cluster 
 #sets up the application in Argo cd and better than via UI 
 # =====================================================
 

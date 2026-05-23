@@ -23,7 +23,8 @@ spec:
       - name: api
         #our image is in google github container registry 
         #the line below will be updated after our CD workflow completes 
-        image: ghcr.io/stevejamesaddress-png/BDA_CA3:main
+#       # update so we use the latest build for tracability of all builds 
+        image: ghcr.io/stevejamesaddress-png/bda_ca3:${{ github.sha }}
         ports:
         - containerPort: 5001
         env:
@@ -35,3 +36,5 @@ spec:
           value: /app/models
         - name: API_PORT
           value: "5001"
+        - name: MLFLOW_TRACKING
+          value: "http://mlflow:5000"

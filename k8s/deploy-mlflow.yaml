@@ -1,0 +1,28 @@
+# =====================================================
+# File: k8s/deploy-mlflow.yaml
+# Author: Steven James L00196960
+# We use an off shelf MLflow tracking server (web UI on port 5000)
+# this will be in the default namespace 
+# =====================================================
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlflow
+  template:
+    metadata:
+      labels:
+        app: mlflow
+    spec:
+      containers:
+      - name: mlflow
+        #get a ready cooked image 
+        image: ghcr.io/mlflow/mlflow:latest
+        ports:
+        - containerPort: 5000
+        command: ["mlflow", "server", "--host", "0.0.0.0"]

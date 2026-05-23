@@ -70,6 +70,7 @@ def main():
     f1 = f1_score(y_test, predictions, average='macro')
 
     logger.info(f"Training finished - Accuracy: {acc:.2f}, F1: {f1:.2f}")
+  
 
     # Save the model artefact using native pickle
     os.makedirs(model_dir, exist_ok=True)

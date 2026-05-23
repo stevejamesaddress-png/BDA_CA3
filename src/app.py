@@ -1,9 +1,10 @@
 # =====================================================
-# File: app.py
+# File: train.py
 # Author: Steven James L00196960
-#
 # Simpple Flask web application 
 # to serve real-time flower inferance 
+#
+# update to record inferance results in mlflow
 # =====================================================
 from flask import Flask, request, jsonify, render_template
 import pickle
@@ -11,13 +12,15 @@ import numpy as np
 import os
 import logging
 import time
+import mlflow
 
 logging.Formatter.converter = time.gmtime
 
 # Logger in zulu format
+logging.Formatter.converter = time.gmtime
 logging.basicConfig(
     level=logging.INFO, 
-    format='%(asctime)sZ - API_NODE - %(levelname)s - %(message)s',
+    format='%(asctime)sZ - TRAIN - %(levelname)s - %(message)s',
     datefmt='%Y-%m-%dT%H:%M:%S'
 )
 logger = logging.getLogger(__name__)
@@ -71,9 +74,25 @@ def predict():
     probabilities = model.predict_proba(input_data)[0]
     confidence = max(probabilities) * 100
     
-    #robustness check  
     flower_name = FLOWER_CLASSES[prediction]
     logger.info(f"Prediction result = {flower_name} with {confidence:.2f}% confidence")
+    #update for adding mlflow 
+    # we will log to mlflow only when in K8s environment i.e production in this simulation
+    # we use the presence of an env var if we have it which we do in K8s see deployment.yaml
+    # simple.
+    mlflow_tracking_uri = os.getenv('MLFLOW_TRACKING_URI')
+    if mlflow_tracking_uri:
+        try:
+            mlflow.set_tracking_uri(mlflow_tracking_uri)
+            mlflow.log_param("sepal_length", sepal_length)
+            mlflow.log_param("sepal_width", sepal_width)
+            mlflow.log_param("petal_length", petal_length)
+            mlflow.log_param("petal_width", petal_width)
+            mlflow.log_param("predicted_flower", flower_name)
+            mlflow.log_metric("confidence_score", round(confidence, 2))
+            logger.info(f"Inference result logged to MLflow")
+        except Exception as e:
+            logger.warning(f"Could not log inference to MLflow: {e}")
     
     return jsonify({
         "status": "success",

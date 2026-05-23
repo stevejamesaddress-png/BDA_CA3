@@ -46,7 +46,11 @@ jobs:
           context: .
           file: ./Dockerfile.app
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/bda-ca3:main
+          # we will have main always and thats latest but also build version 
+          # Secure Hash Algorithm ID
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/bda_ca3:main
+            ghcr.io/${{ github.repository_owner }}/bda_ca3:${{ github.sha }}
 
       - name: Update Kubernetes manifest with the new image
         run: |
