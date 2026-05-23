@@ -16,6 +16,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src/app.py ./
 COPY src/templates/index.html ./templates/index.html
+# COPY_MODEL=true  copy model used when building in github
+# COPY_MODEL=false  dont copy when using local build with compose
+ARG COPY_MODEL=true
+RUN if [ "$COPY_MODEL" = "true" ]; then \
+      mkdir -p ./models && \
+      cp models/local_model.pkl ./models/local_model.pkl || true; \
+    fi
+
 
 ENV PYTHONUNBUFFERED=1
 
