@@ -28,6 +28,7 @@ jobs:
   deploy:
     # linux image 
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     #fix premission issue preventing push to repo
     permissions:
       contents: write
