@@ -52,7 +52,7 @@ def home():
 
 @app.route('/predict', methods=['GET'])
 def predict():
-    logger.info("Predicting")
+    logger.info("Predicting test")
     try:
         #get the querry values from HTTP request
         sepal_length = float(request.args.get('sepal_length'))
