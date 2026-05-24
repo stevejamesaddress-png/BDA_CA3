@@ -16,6 +16,9 @@ spec:
       app: bda-ca3-api
   template:
     metadata:
+      annotations:
+        restartedAt: "20260524091742"
+    metadata:
       labels:
         app: bda-ca3-api
     spec:
