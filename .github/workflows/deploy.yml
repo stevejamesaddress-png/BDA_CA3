@@ -17,8 +17,12 @@ name: CD - Build & Deploy API to Kubernetes
 
 # Only run after code is safely on main
 on:
-  push:
-    branches: [ main ]
+  workflow_run:
+    workflows: ["CI-TRAINER-API-SMOKE-TEST"]
+    types:
+      - completed
+    branches:
+      - main
 
 jobs:
   deploy:
