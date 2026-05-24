@@ -80,7 +80,7 @@ def predict():
     # we will log to mlflow only when in K8s environment i.e production in this simulation
     # we use the presence of an env var if we have it which we do in K8s see deployment.yaml
     # simple.
-    mlflow_tracking_uri = os.getenv('MLFLOW_TRACKING')
+    mlflow_tracking_uri = os.getenv('MLFLOW_TRACKING', "http://localhost:5000")
     if mlflow_tracking_uri:
         try:
             mlflow.set_tracking_uri(mlflow_tracking_uri)

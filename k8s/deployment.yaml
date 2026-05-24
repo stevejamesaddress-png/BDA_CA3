@@ -38,4 +38,5 @@ spec:
         - name: API_PORT
           value: "5001"
         - name: MLFLOW_TRACKING
-          value: "http://mlflow:5000"
+          #fix no DNS we map to localhost
+          value: "http://localhost:5000"
