@@ -17,23 +17,7 @@ spec:
   template:
     metadata:
       annotations:
-        restartedAt: "20260524130715"
-    metadata:
-      annotations:
         restartedAt: "20260524125000"
-    metadata:
-      annotations:
-        restartedAt: "20260524124009"
-    metadata:
-      annotations:
-        restartedAt: "20260524121148"
-    metadata:
-      annotations:
-        restartedAt: "20260524115450"
-    metadata:
-      annotations:
-        restartedAt: "20260524091742"
-    metadata:
       labels:
         app: bda-ca3-api
     spec:
