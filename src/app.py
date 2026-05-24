@@ -110,5 +110,5 @@ def predict():
 
 if __name__ == '__main__':
     logger.info(f"Binding FLASK API to 0.0.0.0 on port {service_port}...")
-    logger.info("Test 1")
+    logger.info("Test 2")
     app.run(host='0.0.0.0', port=service_port)
