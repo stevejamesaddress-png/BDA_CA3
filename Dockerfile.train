@@ -16,5 +16,6 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src/train.py ./
+COPY data/ ./data/
 ENV PYTHONUNBUFFERED=1
 CMD ["python", "train.py"]

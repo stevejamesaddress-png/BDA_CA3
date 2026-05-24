@@ -33,12 +33,6 @@ jobs:
       - name: Checkout out the latest code
         uses: actions/checkout@v4
 
-      - name: Generate Model Artefact
-        run: |
-          echo "*** Running training = local_model.pkl ***"
-          docker compose build trainer
-          docker compose up --build --exit-code-from trainer trainer
-
       - name: GitHub Container Registry Login
         uses: docker/login-action@v3
         with:
@@ -46,6 +40,16 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # build a training immage to perform traniing 
+      - name: Build and push the Trainer Docker image to GHCR
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.train
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/bda-ca3-trainer:main
+
+      #build the app image with web ui
       - name: Build and push the API Docker image to GHCR
         uses: docker/build-push-action@v5
         with:
@@ -59,7 +63,7 @@ jobs:
       - name: Update Kubernetes manifest with the new image
         run: |
           echo "*** Updating k8s/deployment.yaml with latest image ***"
-          sed -i "s|image:.*|image: ghcr.io/${{ github.repository_owner }}/bda-ca3:main|g" k8s/deployment.yaml
+          sed -i '/template:/a\    metadata:\n      annotations:\n        restartedAt: "'`date +%Y%m%d%H%M%S`'"' k8s/deployment.yaml
           echo "Kubernetes manifest updated"
 
       - name: Commit and push the updated Kubernetes manifest

@@ -19,6 +19,23 @@ spec:
       labels:
         app: bda-ca3-api
     spec:
+      initContainers:
+      - name: model-trainer
+        image: ghcr.io/stevejamesaddress-png/bda-ca3-trainer:main
+        imagePullPolicy: Always
+        command: ["python", "train.py"]
+        env:
+        - name: MLFLOW_TRACKING
+          value: "http://mlflow:5000"
+        - name: MODEL_DIR
+          value: /app/models
+        - name: DATA_DIR
+          value: /app/data 
+        - name: DATA_FILENAME
+          value: iris.csv
+        volumeMounts:
+        - name: model-storage
+          mountPath: /app/models
       containers:
       - name: api
         #our image is in google github container registry 
@@ -39,3 +56,9 @@ spec:
           value: "5001"
         - name: MLFLOW_TRACKING
           value: "http://mlflow:5000"
+        volumeMounts:
+          - name: model-storage
+            mountPath: /app/models
+      volumes:
+        - name: model-storage
+          emptyDir: {}

@@ -17,7 +17,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY src/app.py ./
 COPY src/templates/index.html ./templates/index.html
 # fix mixing things so we just use docker copy 
-COPY models/ ./models/
+# we now run the model in ARGOCD pipline before starting app 
+#COPY models/ ./models/
 
 
 ENV PYTHONUNBUFFERED=1
