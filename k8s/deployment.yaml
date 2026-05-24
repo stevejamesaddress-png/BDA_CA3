@@ -17,6 +17,9 @@ spec:
   template:
     metadata:
       annotations:
+        restartedAt: "20260524125000"
+    metadata:
+      annotations:
         restartedAt: "20260524124009"
     metadata:
       annotations:
