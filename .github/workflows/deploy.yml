@@ -68,7 +68,7 @@ jobs:
       - name: Update Kubernetes manifest with the new image
         run: |
           echo "*** Updating k8s/deployment.yaml with latest image ***"
-          sed -i '/template:/a\    metadata:\n      annotations:\n        restartedAt: "'`date +%Y%m%d%H%M%S`'"' k8s/deployment.yaml
+          sed -i 's/restartedAt: .*/restartedAt: "'$(date +%Y%m%d%H%M%S)'"/' k8s/deployment.yaml
           echo "Kubernetes manifest updated"
 
       - name: Commit and push the updated Kubernetes manifest
